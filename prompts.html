@@ -1,8 +1,40 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Простой генератор промптов</title>
+    <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DreamPrompt Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gray: {
+                850: '#1f2937',
+                900: '#111827',
+                950: '#0b0f19',
+              },
+              accent: {
+                400: '#818cf8',
+                500: '#6366f1',
+                600: '#4f46e5',
+              }
+            },
+            animation: {
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { backgroundPosition: '-1000px 0' },
+                '100%': { backgroundPosition: '1000px 0' }
+              }
+            }
+          }
+        }
+      }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,227 +102,17 @@
             border: 1px solid #d2d9f0;
         }
     </style>
+    <script type="importmap">
+    {
+        "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+  }
+}
+       </script> 
 </head>
 <body>
-
-<div class="container">
-    <h1>Простой генератор промптов</h1>
-
-    <label for="idea">Идея / сюжет:</label>
-    <textarea id="idea" placeholder="Например: женщина в мятном платье танцует на улице города..."></textarea>
-
-    <label for="type" style="margin-top:10px;">Тип промпта:</label>
-    <select id="type">
-        <option value="portrait">Портрет</option>
-        <option value="scene">Сцена</option>
-        <option value="fantasy">Фэнтези</option>
-    </select>
-
-    <button onclick="generatePrompt()">Сгенерировать промпт</button>
-
-    <div class="output" id="outputBox">
-        Здесь появится промпт...
-    </div>
-</div>
-
-<script>
-// случайный элемент из массива
-function rand(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function generatePrompt() {
-    var idea = document.getElementById("idea").value.trim();
-    var type = document.getElementById("type").value;
-    var lang = document.getElementById("lang").value;
-    var box  = document.getElementById("outputBox");
-
-    if (!idea) {
-        box.textContent = "Сначала опиши идею хотя бы одним предложением.";
-        return;
-    }
-
-    // НАСТРОЙКИ ДЛЯ ВАРИАТИВНОСТИ
-
-    var moodsRu = [
-        "тихое, почти медитативное настроение",
-        "радостная, живая, светлая атмосфера",
-        "лёгкая ностальгия и ощущение тёплой памяти",
-        "чувство ожидания чуда",
-        "чуть драматичное, кинематографичное настроение",
-        "уютное, домашнее, тёплое состояние",
-        "ощущение свободы, внутреннего полёта и лёгкости"
-    ];
-
-    var lightsRu = [
-        "мягкий рассеянный свет без резких теней",
-        "золотой час, тёплые солнечные блики и мягкие полутени",
-        "холодный северный свет с тонкими, аккуратными тенями",
-        "контровый свет, создающий светящийся ореол вокруг героя",
-        "вечерний свет витрин и уличных фонарей",
-        "кинематографичный свет с акцентом на лице и руках"
-    ];
-
-    var palettesRu = [
-        "мятно-зелёные и кремовые оттенки",
-        "тёплые терракотовые, песочные и молочные тона",
-        "серебристо-синие и лиловые переливы",
-        "мягкая пастель с акцентом на один выразительный цвет",
-        "золото, глубокий индиго и приглушённый бордо",
-        "натуральные землистые цвета с лёгким сиянием"
-    ];
-
-    var cameraEn = [
-        "85mm lens, cinematic close-up framing",
-        "50mm lens, natural perspective, mid shot",
-        "35mm lens, environmental storytelling shot",
-        "telephoto look, compressed background, elegant framing",
-        "medium shot, slight angle, delicate depth of field"
-    ];
-
-    var detailEn = [
-        "hyper-detailed textures, realistic skin and fabric",
-        "fine detail in hair, eyes and fabric folds",
-        "subtle micro-contrast, perfect rendering of materials",
-        "smooth gradients between light and shadow, rich texture",
-        "carefully rendered facial features, lifelike expression"
-    ];
-
-    var filmEn = [
-        "cinematic film look, subtle film grain, HDR",
-        "soft analog film emulation, gentle contrast, rich tones",
-        "8k digital cinema quality, crystal clear details",
-        "Kodak-style color science, warm highlights, soft shadows",
-        "fine-art photography style, gallery quality rendering"
-    ];
-
-    var moodRu  = rand(moodsRu);
-    var lightRu = rand(lightsRu);
-    var palRu   = rand(palettesRu);
-    var camEn   = rand(cameraEn);
-    var detEn   = rand(detailEn);
-    var film    = rand(filmEn);
-
-    var ru = "";
-    var en = "";
-
-    // ОСНОВНЫЕ ШАБЛОНЫ ДЛЯ ТИПОВ
-
-    if (type === "portrait") {
-        ru =
-"Художественный портрет: " + idea + ".\n" +
-"Общее настроение: " + moodRu + ".\n" +
-"Освещение: " + lightRu + ".\n" +
-"Цветовая палитра: " + palRu + ".\n" +
-"Композиция — средний или крупный план, мягкий фокус на глазах, пластика позы естественная, без излишней постановочности. " +
-"Текстура кожи выглядит живой и натуральной, волосы и ткань проработаны до мелких деталей, в кадре ощущается воздух и глубина.";
-
-        en =
-"masterpiece, high-end portrait of " + idea + ", " +
-"emotional expression, " + camEn + ", " + film + ", " +
-"soft, flattering cinematic lighting, " + detEn + ", " +
-"natural skin texture, lifelike eyes, gentle depth of field, " +
-"subtle bokeh in the background, ultra detailed, 8k, high dynamic range, realistic, artstation quality";
-    }
-
-    else if (type === "scene") {
-        ru =
-"Кинематографичная сцена: " + idea + ".\n" +
-"Настроение кадра: " + moodRu + ".\n" +
-"Свет: " + lightRu + ".\n" +
-"Палитра: " + palRu + ".\n" +
-"Композиция строится так, чтобы зритель чувствовал глубину пространства: передний план, средний и дальний план аккуратно разделены, " +
-"в кадре есть небольшие детали, которые подсказывают историю персонажей. Атмосфера напоминает стоп-кадр из хорошего фильма.";
-
-        en =
-"cinematic scene, " + idea + ", " +
-"rich atmospheric depth, volumetric lighting, " + camEn + ", " +
-"detailed environment, layered foreground and background, storytelling composition, " +
-film + ", foggy depth, soft haze, highly detailed, 8k, dramatic yet natural, film still, epic storytelling";
-    }
-
-    else if (type === "fantasy") {
-        ru =
-"Фэнтезийная / сказочная иллюстрация: " + idea + ".\n" +
-"Общее настроение: " + moodRu + ".\n" +
-"Свет и атмосфера: " + lightRu + ", лёгкое ощущение волшебства и внутреннего свечения.\n" +
-"Палитра: " + palRu + ".\n" +
-"В сцене много мелких деталей, визуальных намёков на легенды и историю мира, персонажи выглядят объёмно, природные элементы гармоничны и живые.";
-
-        en =
-"fantasy illustration of " + idea + ", " +
-"magical realism, soft glowing accents, ethereal atmosphere, " +
-"highly detailed environment, intricate ornaments and props, " +
-"fine painterly rendering, " + detEn + ", " +
-"fantasy art, concept art, artstation, masterpiece, 8k, dramatic, vivid colors, dreamy mood";
-    }
-
-    else if (type === "realistic") {
-        ru =
-"Фотореалистичное изображение: " + idea + ".\n" +
-"Освещение максимально приближено к естественному, без грубых эффектов, " +
-"с аккуратным построением света и тени. Палитра: " + palRu + ".\n" +
-"Все материалы — кожа, ткань, фон, мелкие предметы — выглядят правдоподобно, с мягкими переходами и аккуратной фактурой.";
-
-        en =
-"ultra realistic photo of " + idea + ", " +
-"physically accurate materials, " + film + ", " +
-"true-to-life colors, balanced exposure, " + detEn + ", " +
-"subtle imperfections for realism, ultra sharp focus, 8k resolution, HDR, photograph, lifelike rendering";
-    }
-
-    else { // style
-        ru =
-"Атмосферный образ / стиль: " + idea + ".\n" +
-"Общее настроение: " + moodRu + ".\n" +
-"Свет: " + lightRu + ".\n" +
-"Палитра: " + palRu + ".\n" +
-"Главный акцент делается на цельности стиля, характере кадра и узнаваемой визуальной подписи — как будто это кадр из хорошо продуманного арт-проекта.";
-
-        en =
-"stylized artwork of " + idea + ", " +
-"strong visual identity, " + film + ", " +
-"carefully curated color palette, expressive lighting, " +
-"editorial / fine-art style, " + detEn + ", " +
-"clean composition, elegant framing, ultra detailed, 8k, art print quality";
-    }
-
-    var result;
-    if (lang === "mixed") {
-        result = ru + "\n\nEN prompt:\n" + en;
-    } else {
-        result = en;
-    }
-
-    box.textContent = result;
-}
-
-function copyPrompt() {
-    var box = document.getElementById("outputBox");
-    var text = (box.textContent || "").trim();
-
-    if (!text || text === "Здесь появится промпт...") {
-        alert("Пока копировать нечего — сначала сгенерируй промпт.");
-        return;
-    }
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-            .then(function () {
-                alert("Промпт скопирован в буфер обмена.");
-            })
-            .catch(function () {
-                alert("Не получилось скопировать автоматически — выдели текст и скопируй вручную.");
-            });
-    } else {
-        alert("Автоматическое копирование недоступно — выдели текст и скопируй вручную.");
-    }
-}
-</script>
-
-
-</body>
-</html>
-
-
 
