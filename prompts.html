@@ -2,44 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Генератор художественных промптов</title>
+    <title>Простой генератор промптов</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(#eef2ff, #d7e0ff);
+            background: #eef2ff;
             margin: 0;
             padding: 40px 10px;
-            color: #333;
         }
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: auto;
             background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 0 24px rgba(0,0,0,0.13);
+            padding: 24px 28px;
+            border-radius: 14px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.12);
             box-sizing: border-box;
         }
         h1 {
             text-align: center;
             margin-top: 0;
-            margin-bottom: 8px;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         label {
             font-weight: bold;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         textarea {
             width: 100%;
-            height: 120px;
-            padding: 12px;
+            height: 110px;
+            padding: 10px;
             border-radius: 10px;
             border: 1px solid #bbb;
             resize: vertical;
@@ -48,20 +41,14 @@
         }
         select {
             margin-top: 10px;
-            padding: 8px;
+            padding: 6px 10px;
             border-radius: 8px;
             border: 1px solid #bbb;
-            font-size: 14px;
-        }
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            align-items: center;
-            margin-top: 10px;
         }
         button {
-            padding: 14px 24px;
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
             border: none;
             border-radius: 10px;
             background: #4a72f5;
@@ -72,95 +59,70 @@
         button:hover {
             background: #355de0;
         }
-        .btn-secondary {
-            background: #f0f3ff;
-            color: #334;
-            font-size: 14px;
-        }
-        .btn-secondary:hover {
-            background: #e0e5ff;
-        }
         .output {
-            margin-top: 25px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 16px;
             background: #f7f9ff;
             border-radius: 10px;
-            min-height: 80px;
-            font-size: 16px;
+            min-height: 70px;
+            font-size: 15px;
             white-space: pre-line;
             border: 1px solid #d2d9f0;
-        }
-        .note {
-            margin-top: 8px;
-            font-size: 12px;
-            color: #777;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Генератор художественных промптов</h1>
-    <div class="subtitle">
-        Введите идею — и получите выверенный промпт для нейросетей: живой, образный, с правильными тегами.
-    </div>
+    <h1>Простой генератор промптов</h1>
 
-    <label for="inputText">Идея / сюжет / образ:</label>
-    <textarea id="inputText" placeholder="Например: зрелая женщина в мятном платье 60-х танцует на пустынной вечерней улице города..."></textarea>
+    <label for="idea">Идея / сюжет:</label>
+    <textarea id="idea" placeholder="Например: женщина в мятном платье танцует на улице города..."></textarea>
 
-    <div class="row">
-        <div>
-            <label>Тип промпта:</label>
-            <select id="promptType">
-                <option value="portrait">Портрет</option>
-                <option value="scene">Сцена / сюжет</option>
-                <option value="fantasy">Фэнтези / сказка</option>
-                <option value="realistic">Фотореализм</option>
-                <option value="style">Атмосфера / стиль</option>
-                <option value="video">Промпт для видео</option>
-            </select>
-        </div>
-        <div>
-            <label>Язык тегов:</label>
-            <select id="langType">
-                <option value="mixed">Русское описание + EN теги</option>
-                <option value="en">Только EN промпт</option>
-            </select>
-        </div>
-    </div>
+    <label for="type" style="margin-top:10px;">Тип промпта:</label>
+    <select id="type">
+        <option value="portrait">Портрет</option>
+        <option value="scene">Сцена</option>
+        <option value="fantasy">Фэнтези</option>
+    </select>
 
-    <div class="row" style="margin-top:18px;">
-        <button onclick="generatePrompt()">Сгенерировать промпт</button>
-        <button class="btn-secondary" onclick="copyPrompt()">Скопировать</button>
-    </div>
+    <button onclick="generatePrompt()">Сгенерировать промпт</button>
 
     <div class="output" id="outputBox">
-        Здесь появится сгенерированный промпт...
-    </div>
-    <div class="note">
-        Можно нажимать «Сгенерировать» несколько раз с одной и той же идеей — детали будут чуть меняться, создавая новые варианты.
+        Здесь появится промпт...
     </div>
 </div>
 
 <script>
-function rand(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
-
 function generatePrompt() {
-    const text = document.getElementById("inputText").value.trim();
-    const type = document.getElementById("promptType").value;
-    const lang = document.getElementById("langType").value;
-    const box = document.getElementById("outputBox");
+    var idea = document.getElementById("idea").value.trim();
+    var type = document.getElementById("type").value;
+    var box  = document.getElementById("outputBox");
 
-    if (!text) {
-        box.innerText = "Сначала опиши идею, образ или сцену — хотя бы одним предложением.";
+    if (!idea) {
+        box.textContent = "Сначала опиши идею хотя бы одним предложением.";
         return;
     }
 
-    const moods = [
-        "тихое, почти медитативное настроение",
-        "радостная, живая, светлая атмосфера",
-        "лёгкая ностальгия и ощущение тёп
+    var prompt = "";
+
+    if (type === "portrait") {
+        prompt =
+"high-end portrait, " + idea + ", soft cinematic light, sharp details, realistic skin, natural colors, 85mm lens, shallow depth of field, ultra detailed, 8k";
+    } else if (type === "scene") {
+        prompt =
+"cinematic scene, " + idea + ", deep atmosphere, volumetric light, detailed environment, 35mm film look, storytelling composition, highly detailed";
+    } else if (type === "fantasy") {
+        prompt =
+"fantasy illustration, " + idea + ", magical realism, glowing accents, rich colors, intricate details, painterly style, artstation, masterpiece";
+    }
+
+    box.textContent = prompt;
+}
+</script>
+
+</body>
+</html>
+
 
 
