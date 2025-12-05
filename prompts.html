@@ -1,118 +1,16 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DreamPrompt Architect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              gray: {
-                850: '#1f2937',
-                900: '#111827',
-                950: '#0b0f19',
-              },
-              accent: {
-                400: '#818cf8',
-                500: '#6366f1',
-                600: '#4f46e5',
-              }
-            },
-            animation: {
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'shimmer': 'shimmer 2s linear infinite',
-            },
-            keyframes: {
-              shimmer: {
-                '0%': { backgroundPosition: '-1000px 0' },
-                '100%': { backgroundPosition: '1000px 0' }
-              }
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2ff;
-            margin: 0;
-            padding: 40px 10px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: #ffffff;
-            padding: 24px 28px;
-            border-radius: 14px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.12);
-            box-sizing: border-box;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 16px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 6px;
-        }
-        textarea {
-            width: 100%;
-            height: 110px;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #bbb;
-            resize: vertical;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
-        select {
-            margin-top: 10px;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #bbb;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 18px;
-            border: none;
-            border-radius: 10px;
-            background: #4a72f5;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #355de0;
-        }
-        .output {
-            margin-top: 20px;
-            padding: 16px;
-            background: #f7f9ff;
-            border-radius: 10px;
-            min-height: 70px;
-            font-size: 15px;
-            white-space: pre-line;
-            border: 1px solid #d2d9f0;
-        }
-    </style>
-    <script type="importmap">
-    {
-        "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
-  }
-}
-       </script> 
-</head>
-<body>
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+     
